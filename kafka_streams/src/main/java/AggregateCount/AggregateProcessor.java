@@ -1,4 +1,4 @@
-package kafka_streams;
+package AggregateCount;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueIterator;
@@ -18,18 +18,18 @@ public class AggregateProcessor extends AbstractProcessor<String, Long> {
     public void init(ProcessorContext context) {
         // keep the processor context locally because we need it in punctuate() and commit()
         this.context = context;
-
+	System.out.println("Context Creation");
         // call this processor's punctuate() method every 1000 milliseconds.
-        this.context.schedule(50000);
+        this.context.schedule(90000);
 
         // retrieve the key-value store named "Counts"
-        this.kvStore = (KeyValueStore<String, Long>) context.getStateStore("Counts");
+        this.kvStore = (KeyValueStore<String, Long>) context.getStateStore("Agg-Counts");
     }
 
     @Override
     public void process(String key, Long count) {
         
-
+	System.out.println("Process");
         Long oldValue = this.kvStore.get(key);
 
         if (oldValue == null) {
@@ -46,7 +46,7 @@ public class AggregateProcessor extends AbstractProcessor<String, Long> {
 
         while (iter.hasNext()) {
             KeyValue<String, Long> entry = iter.next();
-            context.forward(entry.key, entry.value.toString());
+            context.forward(entry.key, entry.value);
         }
 
         iter.close();

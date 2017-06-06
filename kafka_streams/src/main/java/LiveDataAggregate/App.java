@@ -1,4 +1,4 @@
-package AggregateCount;
+package LiveDataAggregate;
 
 /**
  * Hello world!
